@@ -87,7 +87,7 @@ PRELIMINARY_CALCS_SECTION
  
  SDLinf = CVLinf * Linf;
  LinfdL = ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1);
- for (X=0;X<=NGTG;X++) {
+ for (X=0;X<NGTG;X++) {
    DiffLinfs(X+1) = (Linf - MaxSD * SDLinf) + X * LinfdL;  	 
  }
  
