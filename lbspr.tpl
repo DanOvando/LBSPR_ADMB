@@ -98,13 +98,16 @@ PRELIMINARY_CALCS_SECTION
  
 PROCEDURE_SECTION
   int Gtype, L;
+  double Linc;
+  
+  Linc = LenBins(2) - LenBins(1);
+  
   FMpar = mfexp(logFM); // estimated F/M
   SL50 = mfexp(logSL50); 
   Delta = mfexp(logDelta);
  
   Vul = 1.0/(1+mfexp(-log(19)*(LenBins-SL50)/Delta));
-  
-  MkL = Mk * pow(Linf/LenBins, Mpow);
+  MkL = Mk * pow(Linf/(LenBins+Linc/2), Mpow);
   FkL = FMpar * Mk * Vul;
   
   for (Gtype=1;Gtype<=NGTG;Gtype++) {
