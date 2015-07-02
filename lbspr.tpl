@@ -2,7 +2,8 @@
 // GTG Model - Length Structured 
 DATA_SECTION
   init_number Mk;
-  init_number Linf;
+  init_number MedLinf;
+  init_number PopLinf;
   init_number CVLinf;
   
   init_number NGTG;
@@ -92,18 +93,18 @@ PRELIMINARY_CALCS_SECTION
  // Fec = elem_prod(Mat, pow(LenMids, FecB));
  // Fec = Fec/max(Fec);
  
- SDLinf = CVLinf * Linf;
- LinfdL = ((Linf + MaxSD * SDLinf) - (Linf - MaxSD * SDLinf))/(NGTG-1);
+ SDLinf = CVLinf * MedLinf;
+ LinfdL = ((MedLinf + MaxSD * SDLinf) - (MedLinf - MaxSD * SDLinf))/(NGTG-1);
  for (X=0;X<NGTG;X++) {
-   DiffLinfs(X+1) = (Linf - MaxSD * SDLinf) + X * LinfdL;
-   L50gtg(X+1) = L50/Linf * DiffLinfs(X+1);
-   L95gtg(X+1) = L95/Linf * DiffLinfs(X+1); 
+   DiffLinfs(X+1) = (MedLinf - MaxSD * SDLinf) + X * LinfdL;
+   L50gtg(X+1) = L50/PopLinf * DiffLinfs(X+1);
+   L95gtg(X+1) = L95/PopLinf * DiffLinfs(X+1); 
    MatDeltagtg(X+1) = L95gtg(X+1) - L50gtg(X+1);
    MatMat(X+1) = 1.0/(1+mfexp(-log(19)*(LenMids-L50gtg(X+1))/MatDeltagtg(X+1))); 
    FecMat(X+1) =  elem_prod(MatMat(X+1), pow(LenMids, FecB));
  }
-
- RecProbs = 1/(sqrt(2*pi*SDLinf*SDLinf)) * mfexp(-(elem_prod((DiffLinfs-Linf),(DiffLinfs-Linf)))/(2*SDLinf*SDLinf));
+ 
+ RecProbs = 1/(sqrt(2*pi*SDLinf*SDLinf)) * mfexp(-(elem_prod((DiffLinfs-MedLinf),(DiffLinfs-MedLinf)))/(2*SDLinf*SDLinf));
  RecProbs = RecProbs/sum(RecProbs);
  
  
@@ -119,11 +120,11 @@ PROCEDURE_SECTION
   Delta = mfexp(logDelta);
  
   Vul = 1.0/(1+mfexp(-log(19)*(LenBins-SL50)/Delta));
-  MkL = Mk * pow(Linf/(LenBins+Linc/2), Mpow);
+  MkL = Mk * pow(MedLinf/(LenBins+Linc/2), Mpow);
   FkL = FMpar * Mk * Vul;
   
   for (Gtype=1;Gtype<=NGTG;Gtype++) {
-	MKLMat(Gtype) = MkL + Mslope*(DiffLinfs(Gtype) - Linf);
+	MKLMat(Gtype) = MkL + Mslope*(DiffLinfs(Gtype) - MedLinf);
     ZKLMat(Gtype) = MKLMat(Gtype) + FkL;  
 	currMkL = MKLMat(Gtype);
 	currZkL = ZKLMat(Gtype);
